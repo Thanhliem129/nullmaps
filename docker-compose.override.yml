@@ -8,6 +8,9 @@
 
 services:
   martin:
+    # Local first-run serves only the basemap. Terrain overlays are optional and
+    # require data/hillshade.mbtiles, data/contours.mbtiles, data/terrain.mbtiles.
+    command: ["--route-prefix", "/tiles", "--font", "/fonts", "--sprite", "/sprites", "/data/${PMTILES_FILE:-vietnam.pmtiles}"]
     ports:
       - "${MARTIN_PORT:-3000}:3000"
   demo:

@@ -32,7 +32,7 @@ await nm.snap(["10.7725,106.6980", "10.7760,106.7000"]);     // snap-to-roads
 ## Map features (MapLibre helpers)
 
 ```js
-const map = nm.map(maplibregl, "map", { theme: "dark", controls: true });
+const map = nm.map(maplibregl, "map", { theme: "dark", controls: true }); // 3D camera by default
 
 // draw a route on the map
 const route = await nm.directions("10.7725,106.6980", "10.7951,106.7218");
@@ -46,6 +46,8 @@ nm.addOverlay(map, myStationsGeoJSON, { color: "#163300" });
 ```
 
 `map()` adds navigation / scale / geolocate / fullscreen controls by default (`controls: false` to skip).
+It opens with a pitched 3D camera so building extrusions are visible; pass `{ threeD: false }` for a flat map,
+or `{ theme: "terrain" }` after building `data/terrain.mbtiles` for true elevation.
 
 ### Static map image (client-side)
 

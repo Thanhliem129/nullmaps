@@ -8,7 +8,9 @@
   "sources": {
     "vn": {
       "type": "vector",
-      "url": "/tiles/vietnam?v=z16"
+      "tiles": ["/tiles/vietnam/{z}/{x}/{y}"],
+      "minzoom": 0,
+      "maxzoom": 16
     },
     "sovereignty": {
       "type": "geojson",

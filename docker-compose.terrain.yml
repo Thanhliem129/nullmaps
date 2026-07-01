@@ -1,0 +1,11 @@
+# Optional local override for true DEM terrain.
+#
+# Use after building data/terrain.mbtiles:
+#   docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.terrain.yml up -d martin demo
+#
+# The normal docker-compose.override.yml keeps first-run local dev lightweight and serves
+# only the basemap. This file adds the terrain-RGB MBTiles source when the artifact exists.
+
+services:
+  martin:
+    command: ["--route-prefix", "/tiles", "--font", "/fonts", "--sprite", "/sprites", "/data/${PMTILES_FILE:-vietnam.pmtiles}", "/data/terrain.mbtiles"]

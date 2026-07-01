@@ -74,17 +74,25 @@ export class NullMaps {
   }
 
   // MapLibre helper — pass the imported maplibregl module + a container id/element.
-  // opts.theme "dark" uses the dark style; opts.controls adds nav/scale/geolocate/fullscreen.
+  // Opens in a 3D camera by default (building extrusions in the basemap); set
+  // opts.threeD=false or pass pitch:0 for a flat map. opts.theme "terrain" uses
+  // the DEM terrain style when data/terrain.mbtiles is served.
   map(maplibregl, container, opts = {}) {
-    const { theme = "light", controls = true, pmtiles, ...mapOpts } = opts;
+    const { theme = "light", controls = true, pmtiles, threeD = true, ...mapOpts } = opts;
+    const { transformRequest, ...restMapOpts } = mapOpts;
     registerPmtilesProtocol(maplibregl, pmtiles);
+    const camera = threeD || theme === "terrain" ? { zoom: 15, pitch: 60, bearing: -22, maxPitch: 85 } : { zoom: 11 };
+    const resolveRequest = (url, resourceType) => {
+      const resolved = typeof url === "string" && url.startsWith("/") ? `${this.base}${url}` : url;
+      return transformRequest ? transformRequest(resolved, resourceType) : (resolved !== url ? { url: resolved } : undefined);
+    };
     const m = new maplibregl.Map({
       container,
       style: `${this.base}/${styleFile(theme)}`,
       center: [106.700, 10.776],
-      zoom: 11,
-      ...(theme === "terrain" ? { pitch: 60, maxPitch: 85 } : {}),
-      ...mapOpts,
+      ...camera,
+      transformRequest: resolveRequest,
+      ...restMapOpts,
     });
     if (controls) {
       m.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
@@ -154,8 +162,12 @@ export class NullMaps {
   // PNG data URL. opts: { center:[lng,lat], zoom, size:[w,h], theme, markers:[{lng,lat,color}], route }
   staticImage(maplibregl, opts = {}) {
     const { center = [106.700, 10.776], zoom = 12, size = [600, 400], theme = "light",
-      markers = [], route = null, pitch = 0, bearing = 0, pmtiles } = opts;
+      markers = [], route = null, pitch = 0, bearing = 0, pmtiles, transformRequest } = opts;
     registerPmtilesProtocol(maplibregl, pmtiles);
+    const resolveRequest = (url, resourceType) => {
+      const resolved = typeof url === "string" && url.startsWith("/") ? `${this.base}${url}` : url;
+      return transformRequest ? transformRequest(resolved, resourceType) : (resolved !== url ? { url: resolved } : undefined);
+    };
     return new Promise((resolve, reject) => {
       const el = document.createElement("div");
       el.style.cssText = `position:absolute;left:-9999px;top:0;width:${size[0]}px;height:${size[1]}px;`;
@@ -163,7 +175,7 @@ export class NullMaps {
       const map = new maplibregl.Map({
         container: el, style: `${this.base}/${styleFile(theme)}`,
         center, zoom, pitch, bearing, interactive: false, attributionControl: false,
-        preserveDrawingBuffer: true,
+        preserveDrawingBuffer: true, transformRequest: resolveRequest,
       });
       const cleanup = () => { try { map.remove(); } catch {} el.remove(); };
       map.on("error", (e) => { cleanup(); reject(e?.error || new Error("map error")); });

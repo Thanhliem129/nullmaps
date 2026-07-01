@@ -85,6 +85,13 @@ demo: fonts ## Build tiles if missing, start services, print the demo URL
 	@echo ">> Demo:   http://localhost:$(DEMO_PORT)   (Ho Chi Minh City basemap)"
 	@echo ">> Martin: http://localhost:$(MARTIN_PORT)/catalog"
 
+.PHONY: demo-3d
+demo-3d: fonts ## Start the local demo with DEM terrain enabled (requires data/terrain.mbtiles)
+	@test -f "$(DATA_DIR)/$(PMTILES_FILE)" || $(MAKE) tiles
+	@test -f "$(DATA_DIR)/terrain.mbtiles" || { echo ">> Missing $(DATA_DIR)/terrain.mbtiles. Build it with: bash infra/build-terrain.sh"; exit 1; }
+	docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.terrain.yml up -d martin demo
+	@echo ">> 3D Demo: http://localhost:$(DEMO_PORT)   (pitched 3D + DEM terrain)"
+
 ADAPTER_PORT  ?= 8010
 GEOCODER_PORT ?= 2322
 

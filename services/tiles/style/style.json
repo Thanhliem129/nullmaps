@@ -8,7 +8,11 @@
   "sources": {
     "vn": {
       "type": "vector",
-      "url": "/tiles/vietnam?v=z16"
+      "tiles": [
+        "/tiles/vietnam/{z}/{x}/{y}"
+      ],
+      "minzoom": 0,
+      "maxzoom": 16
     },
     "sovereignty": {
       "type": "geojson",
@@ -23,7 +27,7 @@
             "geometry": {
               "type": "Point",
               "coordinates": [
-                112.0,
+                112,
                 16.5
               ]
             }
@@ -36,22 +40,13 @@
             "geometry": {
               "type": "Point",
               "coordinates": [
-                114.0,
+                114,
                 9.7
               ]
             }
           }
         ]
       }
-    },
-    "hillshade": {
-      "type": "raster",
-      "url": "/tiles/hillshade",
-      "tileSize": 256
-    },
-    "contours": {
-      "type": "vector",
-      "url": "/tiles/contours"
     }
   },
   "layers": [
@@ -143,16 +138,6 @@
       }
     },
     {
-      "id": "hillshade",
-      "type": "raster",
-      "source": "hillshade",
-      "maxzoom": 14,
-      "paint": {
-        "raster-opacity": 0.22,
-        "raster-resampling": "linear"
-      }
-    },
-    {
       "id": "waterway",
       "type": "line",
       "source": "vn",
@@ -184,7 +169,7 @@
         "fill-color": "#dcd6ca",
         "fill-outline-color": "#cdc7ba"
       },
-      "maxzoom": 15.0
+      "maxzoom": 15
     },
     {
       "id": "housenumber",
@@ -193,8 +178,13 @@
       "source-layer": "housenumber",
       "minzoom": 17,
       "layout": {
-        "text-field": ["get", "housenumber"],
-        "text-font": ["Noto Sans Regular"],
+        "text-field": [
+          "get",
+          "housenumber"
+        ],
+        "text-font": [
+          "Noto Sans Regular"
+        ],
         "text-size": 10,
         "text-padding": 2
       },
@@ -229,126 +219,6 @@
           0
         ],
         "fill-extrusion-opacity": 0.85
-      }
-    },
-    {
-      "id": "contour-line",
-      "type": "line",
-      "source": "contours",
-      "source-layer": "contour",
-      "minzoom": 11,
-      "filter": [
-        "!=",
-        [
-          "%",
-          [
-            "to-number",
-            [
-              "get",
-              "elev"
-            ]
-          ],
-          500
-        ],
-        0
-      ],
-      "paint": {
-        "line-color": "#6b5e4a",
-        "line-opacity": 0.35,
-        "line-width": [
-          "interpolate",
-          [
-            "linear"
-          ],
-          [
-            "zoom"
-          ],
-          11,
-          0.3,
-          15,
-          0.8
-        ]
-      }
-    },
-    {
-      "id": "contour-index",
-      "type": "line",
-      "source": "contours",
-      "source-layer": "contour",
-      "minzoom": 11,
-      "filter": [
-        "==",
-        [
-          "%",
-          [
-            "to-number",
-            [
-              "get",
-              "elev"
-            ]
-          ],
-          500
-        ],
-        0
-      ],
-      "paint": {
-        "line-color": "#6b5e4a",
-        "line-opacity": 0.5,
-        "line-width": [
-          "interpolate",
-          [
-            "linear"
-          ],
-          [
-            "zoom"
-          ],
-          11,
-          0.6,
-          15,
-          1.4
-        ]
-      }
-    },
-    {
-      "id": "contour-label",
-      "type": "symbol",
-      "source": "contours",
-      "source-layer": "contour",
-      "minzoom": 13,
-      "filter": [
-        "==",
-        [
-          "%",
-          [
-            "to-number",
-            [
-              "get",
-              "elev"
-            ]
-          ],
-          500
-        ],
-        0
-      ],
-      "layout": {
-        "symbol-placement": "line",
-        "text-field": [
-          "concat",
-          [
-            "get",
-            "elev"
-          ],
-          " m"
-        ],
-        "text-font": [
-          "Noto Sans Regular"
-        ],
-        "text-size": 9
-      },
-      "paint": {
-        "text-color": "#7a6a52",
-        "text-halo-color": "#ffffff",
-        "text-halo-width": 1
       }
     },
     {
@@ -647,15 +517,55 @@
         "all",
         [
           "in",
-          ["get", "class"],
-          ["literal", [
-            "restaurant", "cafe", "fast_food", "fuel", "hospital", "pharmacy",
-            "school", "college", "bank", "lodging", "parking", "bus", "grocery",
-            "supermarket", "park", "police", "fire_station", "place_of_worship",
-            "cinema", "attraction", "car"
-          ]]
+          [
+            "get",
+            "class"
+          ],
+          [
+            "literal",
+            [
+              "restaurant",
+              "cafe",
+              "fast_food",
+              "fuel",
+              "hospital",
+              "pharmacy",
+              "school",
+              "college",
+              "bank",
+              "lodging",
+              "parking",
+              "bus",
+              "grocery",
+              "supermarket",
+              "park",
+              "police",
+              "fire_station",
+              "place_of_worship",
+              "cinema",
+              "attraction",
+              "car"
+            ]
+          ]
         ],
-        ["<=", ["get", "rank"], ["step", ["zoom"], 3, 15, 6, 16, 99]]
+        [
+          "<=",
+          [
+            "get",
+            "rank"
+          ],
+          [
+            "step",
+            [
+              "zoom"
+            ],
+            3,
+            15,
+            6,
+            16,
+            99
+          ]
+        ]
       ],
       "layout": {
         "icon-image": [
@@ -706,11 +616,17 @@
           "attraction",
           "car",
           "car",
-          ["literal", ""]
+          [
+            "literal",
+            ""
+          ]
         ],
         "icon-size": 1,
         "icon-optional": false,
-        "symbol-sort-key": ["get", "rank"],
+        "symbol-sort-key": [
+          "get",
+          "rank"
+        ],
         "text-field": [
           "coalesce",
           [

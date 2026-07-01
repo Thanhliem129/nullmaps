@@ -19,8 +19,10 @@ make demo                     # build VN PMTiles (if needed) + serve
 
 `make help` lists all commands. Full steps: [`docs/runbook-phase1-tiles.md`](docs/runbook-phase1-tiles.md).
 
-**Terrain overlays:** hillshade + 100 m contour lines (from the Copernicus GLO-90 DEM) build via
-`infra/build-hillshade.sh` / `infra/build-contour.sh` and serve through Martin alongside the basemap.
+The demo opens in a **3D camera** by default, using the basemap's building extrusions. For true
+elevated terrain, build the Copernicus GLO-90 DEM artifact with `infra/build-terrain.sh`, then run
+`make demo-3d` to serve `/tiles/terrain` locally. Hillshade + 100 m contour overlays build via
+`infra/build-hillshade.sh` / `infra/build-contour.sh`.
 
 ## Routing (Phase 2 — motorbike-first)
 
