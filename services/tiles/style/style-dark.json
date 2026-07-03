@@ -201,14 +201,39 @@
       "source-layer": "building",
       "minzoom": 15,
       "paint": {
-        "fill-extrusion-color": "#222b38",
-        "fill-extrusion-height": [
-          "coalesce",
+        "fill-extrusion-color": [
+          "interpolate",
           [
-            "get",
-            "render_height"
+            "linear"
           ],
-          3
+          [
+            "to-number",
+            [
+              "get",
+              "render_height"
+            ],
+            10
+          ],
+          0,
+          "#26303d",
+          24,
+          "#313b49",
+          70,
+          "#445062",
+          140,
+          "#5a6677"
+        ],
+        "fill-extrusion-height": [
+          "*",
+          [
+            "to-number",
+            [
+              "get",
+              "render_height"
+            ],
+            10
+          ],
+          1.12
         ],
         "fill-extrusion-base": [
           "coalesce",
@@ -218,7 +243,8 @@
           ],
           0
         ],
-        "fill-extrusion-opacity": 0.85
+        "fill-extrusion-opacity": 0.9,
+        "fill-extrusion-vertical-gradient": true
       }
     },
     {

@@ -282,7 +282,10 @@
   };
   const toast = (m) => { const t = document.getElementById("toast"); t.textContent = m; t.classList.add("show");
     clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2600); };
+  const DEBUG = new URLSearchParams(location.search).get("debug") === "1";
+  document.getElementById("debug").style.display = DEBUG ? "block" : "none";
   const dbg = (m) => {
+    if (!DEBUG) return;
     const d = document.getElementById("debug");
     d.textContent = (d.textContent + "\n" + m).trim().split("\n").slice(-8).join("\n");
   };
@@ -326,7 +329,7 @@
   }
 
   // ---- map ----
-  const BASE = { light: "/style.json?v=3d-default1", dark: "/style-dark.json?v=3d-default1" };
+  const BASE = { light: "/style.json?v=3d-detail1", dark: "/style-dark.json?v=3d-detail1" };
   let baseTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   let terrainOn = true, terrainAvailable = false;
   const map = new maplibregl.Map({
